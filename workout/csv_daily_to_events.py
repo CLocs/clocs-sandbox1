@@ -10,7 +10,7 @@ def csv_daily_to_events(daily_local_filepath,
     abs_filepath = os.path.join(curr_path, daily_local_filepath)
     df_daily = pd.read_csv(abs_filepath, header=[0, 1], index_col=0)  # index_col=[0, 1]
     # Convert daily to event
-    event_cols = ['Participant', 'Date', 'Activity', 'Count', 'Units', 'Category', 'Normalized', 'Amount']
+    event_cols = ['Participant', 'Date', 'Activity', 'Count', 'Units', 'Category', 'Normalized Amount']
     df_event = pd.DataFrame(columns=event_cols)
     participant = 'Coco'
     for ind, d_row in df_daily.iterrows():
@@ -22,7 +22,7 @@ def csv_daily_to_events(daily_local_filepath,
                     'Participant': 'Colin',
                     'Date': ind,
                     'Category': cat,
-                    'Normalized': cat_val
+                    'Normalized Amount': cat_val
                 }])
                 df_event = df_event.append(e_row, ignore_index='True')
     # Clean dataframe
@@ -42,5 +42,8 @@ if __name__ == '__main__':
                         ['Break', 'Climb', 'Abs', 'Run', 'Bike', 'Lift'])
     csv_daily_to_events('data/2018 Workout Log for Coco and Nico - Logs Daily.csv',
                         '2018_workout_logs_events.csv',
+                        ['Abs', 'Run', 'Bike', 'Lift'])
+    csv_daily_to_events('data/2017 Workout Log for Coco and Nico - Logs Daily.csv',
+                        '2017_workout_logs_events.csv',
                         ['Abs', 'Run', 'Bike', 'Lift'])
 
