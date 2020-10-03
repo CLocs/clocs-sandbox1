@@ -5,7 +5,7 @@ import sys
 
 def number_of_components(adj):
     result = 0
-    #write your code here
+
     return result
 
 if __name__ == '__main__':

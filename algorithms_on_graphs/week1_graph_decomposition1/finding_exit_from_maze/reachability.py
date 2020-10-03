@@ -10,10 +10,8 @@ def reach(adj, x, y):
     queue += [x]
     while len(queue):
         curr = queue.pop(0)
-        # Ignore if visited
-        if curr in visited:
-            continue
-        else:
+        # If not yet visited, visit it! (ignore if visited)
+        if curr not in visited:
             # Mark visited and move to next and queue up
             visited += [curr]
             queue += adj[curr]
