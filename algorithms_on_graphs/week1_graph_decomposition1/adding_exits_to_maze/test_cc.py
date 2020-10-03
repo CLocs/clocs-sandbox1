@@ -19,3 +19,21 @@ class TestCC(unittest.TestCase):
         adj = self.prep_inputs(input)
         ccs = number_of_components(adj)
         self.assertTrue(ccs == 2)
+
+# Flattens list of lists and returns list of unique values
+# def _get_all_vertices(adj):
+#     flatten = [v for vs in adj for v in vs]
+#     all_vs = list(set(flatten))
+#     return all_vs
+# vs = _get_all_vertices(adj)
+
+# def _explore1(v, adj, cc):
+#     e_visited = []
+#     e_queue = []
+#     e_queue += [v]
+#     while len(e_queue):
+#         curr = e_queue.pop(0)
+#         ccs[curr] = cc
+#         if curr not in e_visited:
+#             e_visited += [curr]
+#             e_queue += adj[curr]
