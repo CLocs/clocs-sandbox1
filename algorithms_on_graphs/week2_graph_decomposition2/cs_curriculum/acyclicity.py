@@ -4,6 +4,19 @@ import sys
 
 
 def acyclic(adj):
+    # reverse G --> G-R
+    adjR = [[] for _ in range(len(adj))]
+    for iv, vs in enumerate(adj):
+        for v in vs:
+            adjR[v].append(iv)
+    billy = 1
+
+    # run DFS on G-R
+
+    # for v in V (post-order descending)
+        # if v not visited
+            # explore v
+            # visited vertices are SCC
     return 0
 
 if __name__ == '__main__':
