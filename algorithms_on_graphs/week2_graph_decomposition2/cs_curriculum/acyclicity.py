@@ -3,20 +3,64 @@
 import sys
 
 
+def run_dfs(adj):
+    # https://stackoverflow.com/questions/21669584/pre-and-post-numbers
+    all_vs = list(range(len(adj)))
+    visited = [0] * len(adj)
+    pre = [0] * len(adj)
+    post = [0] * len(adj)
+    i_post = 1
+
+    def dfs(v_e, i_e):
+        visited[v_e] = 1
+        i_e += 1
+        pre[v_e] = i_e
+        for v_next_e in adj[v_e]:
+            if not visited[v_next_e]:
+                i_e = dfs(v_next_e, i_e)
+        i_e += 1
+        post[v_e] = i_e
+        return i_e
+
+    for v in all_vs:
+        if not visited[v]:
+            i_post = dfs(v, i_post)
+
+    return post
+
+
+def run_explore(v, adj):
+    visited = []
+
+    def _explore(v, adj):
+        visited.append(v)
+        for v_next in adj[v]:
+            if not visited[v_next]:
+                _explore(v_next, adj)
+    return visited
+
+
 def acyclic(adj):
     # reverse G --> G-R
     adjR = [[] for _ in range(len(adj))]
     for iv, vs in enumerate(adj):
         for v in vs:
             adjR[v].append(iv)
-    billy = 1
 
     # run DFS on G-R
+    post = run_dfs(adjR)
 
     # for v in V (post-order descending)
-        # if v not visited
+    post_reverse_tup = sorted([(e, i) for i, e in enumerate(post)], reverse=True)
+    post_reverse = [i for v, i in post_reverse_tup]
+
+    visited = [0] * len(adj)
+    for v in post_reverse:
+        if not visited[v]:
             # explore v
+            v_explored = run_explore(v, adj)
             # visited vertices are SCC
+
     return 0
 
 if __name__ == '__main__':
