@@ -1,89 +1,37 @@
-#Uses python3
-
 import sys
 
 
-def run_dfs(adj):
-    # https://stackoverflow.com/questions/21669584/pre-and-post-numbers
-    all_vs = list(range(len(adj)))
-    visited = [0] * len(adj)
-    pre = [0] * len(adj)
-    post = [0] * len(adj)
-    i_post = 1
+def acyclic(graph_adj):
+    all_vs = list(range(len(graph_adj)))
+    visited = [0] * len(graph_adj)
+    rec_stack = [0] * len(graph_adj)
 
-    def dfs(v_e, i_e):
-        visited[v_e] = 1
-        i_e += 1
-        pre[v_e] = i_e
-        for v_next_e in adj[v_e]:
-            if not visited[v_next_e]:
-                i_e = dfs(v_next_e, i_e)
-        i_e += 1
-        post[v_e] = i_e
-        return i_e
+    def cyclic_dfs_helper(v_i):
+        # Mark visited; add to stack
+        visited[v_i] = 1
+        rec_stack[v_i] = 1
+        # DFS on neighbors
+        for v_neighbor in graph_adj[v_i]:
+            if not visited[v_neighbor]:
+                # dive in
+                if cyclic_dfs_helper(v_neighbor):
+                    return True
+            # in current search stack
+            elif rec_stack[v_neighbor]:
+                return True
+        # Done visiting; remove from stack
+        rec_stack[v_i] = False
+        return False
 
+    # Run search on all nodes
+    is_acyclic = False
     for v in all_vs:
         if not visited[v]:
-            i_post = dfs(v, i_post)
+            is_acyclic = cyclic_dfs_helper(v)
+        if is_acyclic:
+            break
 
-    return post
-
-
-def run_explore(v, adj):
-    visited = []
-
-    def _explore(v, adj):
-        visited.append(v)
-        for v_next in adj[v]:
-            if not visited[v_next]:
-                _explore(v_next, adj)
-    return visited
-
-
-def strongly_connected_components(adj):
-    # reverse G --> G-R
-    adjR = [[] for _ in range(len(adj))]
-    for iv, vs in enumerate(adj):
-        for v in vs:
-            adjR[v].append(iv)
-
-    # run DFS on G-R
-    post = run_dfs(adjR)
-
-    # for v in V (post-order descending)
-    post_reverse_tup = sorted([(e, i) for i, e in enumerate(post)], reverse=True)
-    post_reverse = [i for v, i in post_reverse_tup]
-
-    visited = [0] * len(adj)
-    for v in post_reverse:
-        if not visited[v]:
-            # explore v
-            v_explored = run_explore(v, adj)
-            # visited vertices are SCC
-
-    return 0
-
-
-def dfs(v_e, i_e, visited, pre, post):
-    visited[v_e] = 1
-    i_e += 1
-    pre[v_e] = i_e
-    for v_next_e in adj[v_e]:
-        if not visited[v_next_e]:
-            i_e = dfs(v_next_e, i_e)
-    i_e += 1
-    post[v_e] = i_e
-    return i_e
-
-
-
-def acyclic(adj):
-    unvisited = [True]*len(adj)
-    visited = [False]*len(adj)
-    visiting = [False]*len(adj)
-
-
-    pass
+    return is_acyclic
 
 
 if __name__ == '__main__':
