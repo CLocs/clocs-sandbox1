@@ -40,7 +40,7 @@ def run_explore(v, adj):
     return visited
 
 
-def acyclic(adj):
+def strongly_connected_components(adj):
     # reverse G --> G-R
     adjR = [[] for _ in range(len(adj))]
     for iv, vs in enumerate(adj):
@@ -62,6 +62,29 @@ def acyclic(adj):
             # visited vertices are SCC
 
     return 0
+
+
+def dfs(v_e, i_e, visited, pre, post):
+    visited[v_e] = 1
+    i_e += 1
+    pre[v_e] = i_e
+    for v_next_e in adj[v_e]:
+        if not visited[v_next_e]:
+            i_e = dfs(v_next_e, i_e)
+    i_e += 1
+    post[v_e] = i_e
+    return i_e
+
+
+
+def acyclic(adj):
+    unvisited = [True]*len(adj)
+    visited = [False]*len(adj)
+    visiting = [False]*len(adj)
+
+
+    pass
+
 
 if __name__ == '__main__':
     input = sys.stdin.read()
