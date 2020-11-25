@@ -17,3 +17,9 @@ class TestAcyclicity(unittest.TestCase):
         adj = self.prep_inputs(input)
         acyclic_result = acyclic(adj)
         self.assertTrue(acyclic_result == 1)
+
+    def test_acyclic_2(self):
+        input = '5 7 1 2 2 3 1 3 3 4 1 4 2 5 3 5'
+        adj = self.prep_inputs(input)
+        acyclic_result = acyclic(adj)
+        self.assertTrue(acyclic_result == 0)
