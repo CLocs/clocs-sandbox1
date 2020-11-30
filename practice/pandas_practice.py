@@ -19,13 +19,19 @@ def prac_loc():
 
     dt = np.mean(np.diff(df['t']))
 
+    # Binary opening and closing
     win = 0.3
     win_struct = [True] * int(round(win / dt))
+    # Open: remove small intervals
     df['high2'] = ndimage.binary_opening(df['high'], win_struct)
-    win = 0.3
-    win_struct = [True] * int(round(win / dt))
+    # Close: close small gaps
     df['high3'] = ndimage.binary_closing(df['high2'], win_struct)
-    billy = 1
+
+    # Moving average
+
+def moving_average(b: List[bool], win: int):
+
+    pass
 
 
 if __name__ == '__main__':
