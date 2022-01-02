@@ -41,7 +41,7 @@ def get_unique_ints_with_commas(col_vals: pd.Series) -> List:
 
 def compare_to_int(col_val: Union[float, int], ideal_value: int) -> int:
     out_val = 0
-    if type(col_val) == str or np.isnan(col_val):
+    if type(col_val) == str or not np.isnan(col_val):
         out_val = str(ideal_value) in str(col_val)
     return int(out_val)
 
