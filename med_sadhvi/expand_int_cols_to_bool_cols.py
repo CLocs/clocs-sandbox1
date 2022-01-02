@@ -37,25 +37,23 @@ def compare_to_int(col_val: Union[float, int], ideal_value: int) -> int:
     return int(out_val)
 
 
-def run_expand_int_cols_to_bool_cols(filepath: str, col_list: List[str]) -> None:
+def run_expand_int_cols_to_bool_cols(filepath: str, cols_exp: List[str]) -> None:
     # Load file
     df = pd.read_excel(filepath, engine='openpyxl')
-    # df = df.dropna()
 
-    # Create expanded columns
-    for col in col_list:
-        # df[col] = df[col].astype(int)
-        unique_vals = get_unique_ints_with_commas(df[col])
-        for u_val in unique_vals:
-            new_col_name = col + '_A' + str(u_val)
-            df[new_col_name] = df[col].apply(compare_to_int, args=(u_val,))
+    # Create expanded columns and track order
+    cols_out = []
+    for col in df.columns:
+        cols_out.append(col)
+        if col in cols_exp:
+            unique_vals = get_unique_ints_with_commas(df[col])
+            for u_val in unique_vals:
+                new_col_name = col + '_A' + str(u_val)
+                cols_out.append(new_col_name)
+                df[new_col_name] = df[col].apply(compare_to_int, args=(u_val,))
 
-    # Re-order Columns alpha-numerically
-    cols = list(df.columns)
-    cols_sorted = sorted(cols)
-    df = df[cols_sorted]
-
-    # TODO: move exceptional columns to front
+    # Re-order columns
+    df = df[cols_out]
 
     # Dump file
     dirpath, filename = os.path.split(filepath)
