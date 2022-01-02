@@ -22,12 +22,13 @@ def get_unique_ints_with_commas(col_vals: pd.Series) -> List:
         # Merge with unique values
         all_vals = non_comma_vals + comma_val_splits3
         # Remove duplicates
-        s_all = pd.Series(all_vals, dtype=int)
+        s_all = pd.Series(all_vals)  #, dtype=int)
         unique_vals_out = s_all.unique()
         sadhvi = 1
     # Sort unique values
-    unique_vals_sort = sorted(unique_vals_out)
-    return unique_vals_out
+    unique_vals_int = [int(v) for v in unique_vals_out]
+    unique_vals_sort = sorted(unique_vals_int)
+    return unique_vals_sort
 
 
 def compare_to_int(col_val: Union[float, int], ideal_value: int) -> int:
@@ -69,7 +70,7 @@ if __name__ == '__main__':
     # filepath = 'E:/Google Drive/Projects/Med_Sadhvi/Female Sexual Dysfunction/Revised Cancer_WISH_WB_test.xlsx'
     # col_names_to_expand = ['Q1']
 
-    # Real filepath
+    # Inputs
     filepath = 'E:/Google Drive/Projects/Med_Sadhvi/Female Sexual Dysfunction/Revised Cancer_WISH_WB.xlsx'
     col_names_to_expand = ['Q1', 'Q1A_OH', 'Q1A_PA', 'Q1A_MI', 'Q3', 'Q3A_F',
                            'Q3A_M', 'Q3A_NB', 'Q3A_GN', 'Q3A_GNC',
