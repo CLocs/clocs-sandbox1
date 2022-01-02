@@ -4,6 +4,15 @@ from typing import List, Union
 import numpy as np
 
 
+def dump_exp_file(df: pd.DataFrame, filepath: str) -> str:
+    dirpath, filename = os.path.split(filepath)
+    basename, ext = os.path.splitext(filename)
+    out_filename = basename + '_exp' + ext
+    out_filepath = os.path.join(dirpath, out_filename)
+    df.to_excel(out_filepath, index=False)
+    return out_filepath
+
+
 def get_unique_ints_with_commas(col_vals: pd.Series) -> List:
     unique_vals = col_vals[col_vals.notna()].unique()
     unique_vals_out = unique_vals
@@ -24,7 +33,6 @@ def get_unique_ints_with_commas(col_vals: pd.Series) -> List:
         # Remove duplicates
         s_all = pd.Series(all_vals)  #, dtype=int)
         unique_vals_out = s_all.unique()
-        sadhvi = 1
     # Sort unique values
     unique_vals_int = [int(v) for v in unique_vals_out]
     unique_vals_sort = sorted(unique_vals_int)
@@ -38,11 +46,7 @@ def compare_to_int(col_val: Union[float, int], ideal_value: int) -> int:
     return int(out_val)
 
 
-def run_expand_int_cols_to_bool_cols(filepath: str, cols_exp: List[str]) -> None:
-    # Load file
-    df = pd.read_excel(filepath, engine='openpyxl')
-
-    # Create expanded columns and track order
+def expand_columns(df: pd.DataFrame, cols_exp: List[str]) -> pd.DataFrame:
     cols_out = []
     for col in df.columns:
         cols_out.append(col)
@@ -52,16 +56,19 @@ def run_expand_int_cols_to_bool_cols(filepath: str, cols_exp: List[str]) -> None
                 new_col_name = col + '_A' + str(u_val)
                 cols_out.append(new_col_name)
                 df[new_col_name] = df[col].apply(compare_to_int, args=(u_val,))
-
-    # Re-order columns
     df = df[cols_out]
+    return df
+
+
+def run_expand_int_cols_to_bool_cols(filepath: str, cols_exp: List[str]) -> None:
+    # Load file
+    df = pd.read_excel(filepath, engine='openpyxl')
+
+    # Create expanded columns and track order
+    df = expand_columns(df, cols_exp)
 
     # Dump file
-    dirpath, filename = os.path.split(filepath)
-    basename,ext = os.path.splitext(filename)
-    out_filename = basename + '_exp' + ext
-    out_filepath = os.path.join(dirpath, out_filename)
-    df.to_excel(out_filepath, index=False)
+    out_filepath = dump_exp_file(df, filepath)
     print('Bam, done: int columns expanded to bool cols: ', out_filepath)
 
 
