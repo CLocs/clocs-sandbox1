@@ -46,16 +46,31 @@ def compare_to_int(col_val: Union[float, int], ideal_value: int) -> int:
     return int(out_val)
 
 
+def is_bool_series(col_vals: List) -> bool:
+    # Convert from string to int
+    if (len(col_vals) == 1 or len(col_vals) == 2) and \
+            all([type(val) is int for val in col_vals]):
+        return True
+    else:
+        return False
+
+
 def expand_columns(df: pd.DataFrame, cols_exp: List[str]) -> pd.DataFrame:
     cols_out = []
     for col in df.columns:
-        cols_out.append(col)
         if col in cols_exp:
             unique_vals = get_unique_ints_with_commas(df[col])
-            for u_val in unique_vals:
-                new_col_name = col + '_A' + str(u_val)
-                cols_out.append(new_col_name)
-                df[new_col_name] = df[col].apply(compare_to_int, args=(u_val,))
+            # Boolean columns should be one column (not expanded)
+            if is_bool_series(unique_vals):
+                cols_out.append(col)
+            else:
+                # Add a new column for each value and check value equality
+                for u_val in unique_vals:
+                    new_col_name = col + '_A' + str(u_val)
+                    df[new_col_name] = df[col].apply(compare_to_int, args=(u_val,))
+                    cols_out.append(new_col_name)
+        else:
+            cols_out.append(col)
     df = df[cols_out]
     return df
 
