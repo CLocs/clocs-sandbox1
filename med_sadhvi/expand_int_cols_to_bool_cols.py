@@ -60,10 +60,22 @@ def expand_columns(df: pd.DataFrame, cols_exp: List[str]) -> pd.DataFrame:
     return df
 
 
+def check_exp_cols(df: pd.DataFrame, cols_exp_in: List) -> List:
+    cols_exp_check = []
+    for col in cols_exp_in:
+        if col in df.columns:
+            cols_exp_check.append(col)
+        else:
+            print(f'Warning: skipping {col} because not in file.')
+    return cols_exp_check
+
+
 def run_expand_int_cols_to_bool_cols(filepath: str, cols_exp: List[str]) -> None:
     # Load file
     df = pd.read_excel(filepath, engine='openpyxl')
 
+    cols_exp = check_exp_cols(df, cols_exp)
+    # TODO: sort cols_exp. Note: cols_exp.sort() does not work because Q7, Q70
     # Create expanded columns and track order
     df = expand_columns(df, cols_exp)
 
@@ -82,8 +94,8 @@ if __name__ == '__main__':
     col_names_to_expand = ['Q1', 'Q1A_OH', 'Q1A_PA', 'Q1A_MI', 'Q3', 'Q3A_F',
                            'Q3A_M', 'Q3A_NB', 'Q3A_GN', 'Q3A_GNC',
                            'Q3A_TGF', 'Q3A_TGM', 'Q3A_GQ', 'Q3A_NA', 'Q7',
-                           'Q9', 'Q11', 'Q13', 'Q15', 'Q17', 'Q150',
-                           'Q19', 'Q151', 'Q78', 'Q80', 'Q81', 'Q83', 'Q84',
+                           'Q9', 'Q11', 'Q13', 'Q15', 'Q17',
+                           'Q19', 'Q78', 'Q80', 'Q81', 'Q83', 'Q84',
                            'Q85', 'Q86', 'Q87', 'Q89', 'Q91', 'Q92',
                            'Q98', 'Q25_1', 'Q25_2', 'Q25_3', 'Q25_4', 'Q27',
                            'Q29', 'Q31', 'Q33_1', 'Q33_2', 'Q33_3',
@@ -93,7 +105,8 @@ if __name__ == '__main__':
                            'Q71', 'Q73', 'Q75', 'Q77', 'Q79', 'Q81',
                            'Q83', 'Q85', 'Q87','Q81.1', 'Q83.1', 'Q85.1',
                            'Q87.1', 'Q89.1', 'Q91.1', 'Q93.1', 'Q89', 'Q91',
-                           'Q95', 'Q97', 'Q99', 'Q101', 'Q103', 'Q105',
+                           'Q95', 'Q97', 'Q99', 'Q100_1', 'Q100_2', 'Q100_3',
+                           'Q101', 'Q103', 'Q105',
                            'Q107', 'Q109', 'Q111', 'Q113', 'Q115', 'Q117',
                            'Q119', 'Q123_1', 'Q123_2', 'Q123_3',
                            'Q123_4', 'Q123_5', 'Q123_6', 'Q123_7', 'Q123_8',
@@ -101,5 +114,5 @@ if __name__ == '__main__':
                            'Q123_12', 'Q123_13', 'Q125', 'Q129', 'Q131',
                            'Q133', 'Q135', 'Q137', 'Q139', 'Q141_1',
                            'Q141_2', 'Q141_3', 'Q145_1', 'Q145_2', 'Q145_3',
-                           'Q100_1', 'Q100_2', 'Q100_3']
+                           'Q150', 'Q151']
     run_expand_int_cols_to_bool_cols(filepath, col_names_to_expand)
