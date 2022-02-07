@@ -4,10 +4,12 @@ from typing import List, Union
 import numpy as np
 
 
-def dump_exp_file(df: pd.DataFrame, filepath: str) -> str:
+def dump_exp_file(df: pd.DataFrame,
+                  filepath: str,
+                  op_name: str='') -> str:
     dirpath, filename = os.path.split(filepath)
     basename, ext = os.path.splitext(filename)
-    out_filename = basename + '_exp' + ext
+    out_filename = basename + '_' + op_name + ext
     out_filepath = os.path.join(dirpath, out_filename)
     df.to_excel(out_filepath, index=False)
     return out_filepath
@@ -95,7 +97,7 @@ def run_expand_int_cols_to_bool_cols(filepath: str, cols_exp: List[str]) -> None
     df = expand_columns(df, cols_exp)
 
     # Dump file
-    out_filepath = dump_exp_file(df, filepath)
+    out_filepath = dump_exp_file(df, filepath, op_name='exp')
     print('Bam, done: int columns expanded to bool cols: ', out_filepath)
 
 
@@ -105,7 +107,9 @@ if __name__ == '__main__':
     # col_names_to_expand = ['Q1']
 
     # Inputs
-    filepath = 'E:/Google Drive/Projects/Med_Sadhvi/Female Sexual Dysfunction/Revised Cancer_WISH_WB.xlsx'
+    # filepath = 'E:/Google Drive/Projects/Med_Sadhvi/Female Sexual Dysfunction/Revised Cancer_WISH_WB.xlsx'
+    filepath = 'G:/My Drive/Projects/Med_Sadhvi/Female Sexual Dysfunction/Revised Cancer_WISH_WB.xlsx'
+
     col_names_to_expand = ['Q1', 'Q1A_OH', 'Q1A_PA', 'Q1A_MI', 'Q3', 'Q3A_F',
                            'Q3A_M', 'Q3A_NB', 'Q3A_GN', 'Q3A_GNC',
                            'Q3A_TGF', 'Q3A_TGM', 'Q3A_GQ', 'Q3A_NA', 'Q7',
