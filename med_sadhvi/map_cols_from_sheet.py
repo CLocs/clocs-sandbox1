@@ -4,21 +4,24 @@ import re
 from typing import Dict, List, Union
 import numpy as np
 
-def clean_description(description: str) -> str:
-    if type(description) in [float, int]:
-        if np.isnan(description):
-            desc = ''
+def clean_description(desc1: str) -> str:
+    if type(desc1) in [float, int]:
+        if np.isnan(desc1):
+            desc2 = ''
         else:
-            desc = str(description)
+            desc2 = str(desc1)
     else:
-        desc = description
+        desc2 = desc1
     # Remove =
-    desc2 = desc.replace('=', '')
+    desc3 = desc2.replace('=', '')
     # Remove numbers
-
+    desc4 = re.sub('\d', '', desc3)
     # Remove leading and trailing spaces
-    # Replace space with underscore
+    desc5 = re.sub('\s*$', '', desc4)
+    desc6 = re.sub('^\s*', '', desc5)
     # Remove *
+    # desc7 = re.sub
+    # Replace space with underscore
 
     return ''
 
