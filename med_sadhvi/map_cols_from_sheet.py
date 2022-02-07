@@ -20,10 +20,10 @@ def clean_description(desc1: str) -> str:
     desc5 = re.sub('\s*$', '', desc4)
     desc6 = re.sub('^\s*', '', desc5)
     # Remove *
-    # desc7 = re.sub
+    desc7 = re.sub('\*', '', desc6)
     # Replace space with underscore
-
-    return ''
+    desc8 = re.sub('\s', '_', desc7)
+    return desc8
 
 
 def load_col_map_from_file(map_filepath, map_file_sheet) -> Dict:
