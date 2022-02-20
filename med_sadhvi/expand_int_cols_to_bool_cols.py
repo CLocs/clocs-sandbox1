@@ -50,8 +50,9 @@ def compare_to_int(col_val: Union[float, int], ideal_value: int) -> int:
 
 def is_bool_series(col_vals: List) -> bool:
     # Convert from string to int
+    valid_types = [int, bool]
     if (len(col_vals) == 1 or len(col_vals) == 2) and \
-            all([type(val) is int for val in col_vals]):
+            all([type(val) in valid_types for val in col_vals]):
         return True
     else:
         return False
@@ -59,12 +60,18 @@ def is_bool_series(col_vals: List) -> bool:
 
 def expand_columns(df: pd.DataFrame, cols_exp: List[str]) -> pd.DataFrame:
     cols_out = []
+    cols12 = []
     for col in df.columns:
         if col in cols_exp:
             unique_vals = get_unique_ints_with_commas(df[col])
             # Boolean columns should be one column (not expanded)
             if is_bool_series(unique_vals):
                 cols_out.append(col)
+                # Special case: 1,2 -> 0,1
+                if len(unique_vals) == 2 and all([v in [1, 2] for v in unique_vals]):
+                    cols12.append(col)
+                    df[col].replace(1, 0, inplace=True)
+                    df[col].replace(2, 1, inplace=True)
             else:
                 # Add a new column for each value and check value equality
                 for u_val in unique_vals:
@@ -73,7 +80,11 @@ def expand_columns(df: pd.DataFrame, cols_exp: List[str]) -> pd.DataFrame:
                     cols_out.append(new_col_name)
         else:
             cols_out.append(col)
+    # Re-order
     df = df[cols_out]
+    # Warnings
+    if cols12:
+        print(f'Warning: cols {cols12} have values 1,2. Make sure they are not of values 1,2 of possible 0,1,2.')
     return df
 
 
@@ -108,7 +119,8 @@ if __name__ == '__main__':
 
     # Inputs
     # filepath = 'E:/Google Drive/Projects/Med_Sadhvi/Female Sexual Dysfunction/Revised Cancer_WISH_WB.xlsx'
-    filepath = 'G:/My Drive/Projects/Med_Sadhvi/Female Sexual Dysfunction/Revised Cancer_WISH_WB.xlsx'
+    # filepath = 'G:/My Drive/Projects/Med_Sadhvi/Female Sexual Dysfunction/Revised Cancer_WISH_WB.xlsx'
+    filepath = '/Volumes/Google Drive/My Drive/Projects/Med_Sadhvi/Female Sexual Dysfunction/Revised Cancer_WISH_WB.xlsx'
 
     col_names_to_expand = ['Q1', 'Q1A_OH', 'Q1A_PA', 'Q1A_MI', 'Q3', 'Q3A_F',
                            'Q3A_M', 'Q3A_NB', 'Q3A_GN', 'Q3A_GNC',
