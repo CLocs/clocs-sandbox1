@@ -60,7 +60,7 @@ def run_map_cols_from_sheet(main_filepath: str,
     # df_main.to_csv('G:/My Drive/Projects/Med_Sadhvi/Female Sexual Dysfunction/testout.csv')
 
 if __name__ == '__main__':
-    main_file = 'G:/My Drive/Projects/Med_Sadhvi/Female Sexual Dysfunction/Revised Cancer_WISH_WB_exp.xlsx'
-    map_file = 'G:/My Drive/Projects/Med_Sadhvi/Female Sexual Dysfunction/Revised Cancer_WISH_clean_exp3.xlsx'
+    main_file = '/Volumes/Google Drive/My Drive/Projects/Med_Sadhvi/Female Sexual Dysfunction/v1 output/Revised Cancer_WISH_WB_exp.xlsx'
+    map_file = '/Volumes/Google Drive/My Drive/Projects/Med_Sadhvi/Female Sexual Dysfunction/v1 output/Revised Cancer_WISH_clean_exp3.xlsx'
     map_file_sheet = 'Legend'
     run_map_cols_from_sheet(main_file, map_file, map_file_sheet)

@@ -61,6 +61,7 @@ def is_bool_series(col_vals: List) -> bool:
 def expand_columns(df: pd.DataFrame, cols_exp: List[str]) -> pd.DataFrame:
     cols_out = []
     cols12 = []
+    col_one_value = {}
     for col in df.columns:
         if col in cols_exp:
             unique_vals = get_unique_ints_with_commas(df[col])
@@ -72,6 +73,8 @@ def expand_columns(df: pd.DataFrame, cols_exp: List[str]) -> pd.DataFrame:
                     cols12.append(col)
                     df[col].replace(1, 0, inplace=True)
                     df[col].replace(2, 1, inplace=True)
+                if len(unique_vals) == 1:
+                    col_one_value[col] = unique_vals[0]
             else:
                 # Add a new column for each value and check value equality
                 for u_val in unique_vals:
@@ -85,6 +88,9 @@ def expand_columns(df: pd.DataFrame, cols_exp: List[str]) -> pd.DataFrame:
     # Warnings
     if cols12:
         print(f'Warning: cols {cols12} have values 1,2. Make sure they are not of values 1,2 of possible 0,1,2.')
+    if col_one_value:
+        for col1, value1 in col_one_value.items():
+            print(f'Warning: col: value only had 1 value: {col1}:{value1}')
     return df
 
 
