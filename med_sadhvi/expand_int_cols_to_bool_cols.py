@@ -125,8 +125,7 @@ if __name__ == '__main__':
 
     # Inputs
     # filepath = 'E:/Google Drive/Projects/Med_Sadhvi/Female Sexual Dysfunction/Revised Cancer_WISH_WB.xlsx'
-    # filepath = 'G:/My Drive/Projects/Med_Sadhvi/Female Sexual Dysfunction/Revised Cancer_WISH_WB.xlsx'
-    filepath = '/Volumes/Google Drive/My Drive/Projects/Med_Sadhvi/Female Sexual Dysfunction/Revised Cancer_WISH_WB.xlsx'
+    filepath = 'G:/My Drive/Projects/Med_Sadhvi/Female Sexual Dysfunction/v3 output/Revised Cancer_WISH_WB.xlsx'
 
     col_names_to_expand = ['Q1', 'Q1A_OH', 'Q1A_PA', 'Q1A_MI', 'Q3', 'Q3A_F',
                            'Q3A_M', 'Q3A_NB', 'Q3A_GN', 'Q3A_GNC',
