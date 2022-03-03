@@ -39,7 +39,7 @@ def load_col_map_from_file(map_filepath, map_file_sheet) -> Dict:
 def prepend_question_to_answer(col_map: Dict) -> Dict:
     new_map = {}
     # Get the questions
-    q_only = {c: m for c, m in col_map.items() if re.match("^Q\d+$", c) or re.match("^Q\d+\_\d+$", c)}
+    q_only = {c: m for c, m in col_map.items() if re.match("^Q\d+$", c) or re.match("^Q\d+\_\d+$", c) or re.match("Q\d+\.\d+$", c)}
     # Prepend the questions to the answers
     for q_num, q_def in q_only.items():
         answers_exist = False
@@ -77,6 +77,6 @@ def run_map_cols_from_sheet(main_filepath: str,
 
 if __name__ == '__main__':
     main_file = 'G:/My Drive/Projects/Med_Sadhvi/Female Sexual Dysfunction/v3 output/Revised Cancer_WISH_WB_exp.xlsx'
-    map_file = 'G:/My Drive/Projects/Med_Sadhvi/Female Sexual Dysfunction/v3 output/Revised Cancer_WISH_WB_v3.xlsx'
+    map_file = 'G:/My Drive/Projects/Med_Sadhvi/Female Sexual Dysfunction/v3 output/Revised Cancer_WISH_WB_v3_legend.xlsx'
     map_file_sheet = 'Legend'
     run_map_cols_from_sheet(main_file, map_file, map_file_sheet)
