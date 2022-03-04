@@ -29,17 +29,30 @@ def find_next_para_nums(q_para_dict: Dict) -> Dict:
     return q_para_dict
 
 
-def paras_to_question_dict(doc: docx.Document) -> Dict:
-    q_para_dict = get_Q_para_num(doc)
-    para_dict = find_next_para_nums(q_para_dict)
-    billy = 1
+def get_questions(doc: docx.Document, q_para_dict: Dict) -> Dict:
+    for q, qd in q_para_dict.items():
+        q_para = doc.paragraphs[qd['para_num']]
+        billy = 1
+        req = re.match('Q\d+', q_para.text)
+        if req.groups():
+            s_after_q = req.span()[1]
+    pass
+
+
+def get_answers(doc: docx.Document, q_para_dict: Dict) -> Dict:
+    for q, qd in q_para_dict.items():
+        for para in doc.paragraphs[qd['para_num'] + 1 : qd['para_num_next'] - 1]:
+            billy = 2
+            # TODO: walk through answers
     pass
 
 
 def run_parser(docx_filepath: str) -> None:
-    legend_dict = {}
     doc = docx.Document(docx_filepath)
-    para_dict = paras_to_question_dict(doc)
+    q_para_dict = get_Q_para_num(doc)
+    q_para_dict = find_next_para_nums(q_para_dict)
+    q_para_dict = get_questions(doc, q_para_dict)
+    q_para_dict = get_answers(doc, q_para_dict)
     pass
 
 
