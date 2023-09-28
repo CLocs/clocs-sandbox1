@@ -16,6 +16,11 @@ def get_year_from_url(url: str) -> str:
     return year
 
 
+def get_filename_from_url(url: str) -> str:
+    filename = url.rsplit('/', 1)[-1]
+    return filename
+
+
 def get_nrmp_sms_pdf_urls() -> pd.DataFrame:
     # Get HTML page
     URL = "https://www.nrmp.org/match-data-analytics/archives/"
@@ -54,19 +59,34 @@ def get_nrmp_sms_pdf_urls() -> pd.DataFrame:
     # Create DF and extract year
     df_pdf = pd.DataFrame(pdf_urls, columns=['url'])
     df_pdf['year'] = df_pdf['url'].apply(get_year_from_url)
+    df_pdf['filename'] = df_pdf['url'].apply(get_filename_from_url)
+
     return df_pdf
 
 def get_nrmp_archive_pdfs():
     df_pdf = get_nrmp_sms_pdf_urls()
 
     # Download PDFs
-    os.path.expanduser('~')
+    home_dir = os.path.expanduser('~')
+    dl_dir = os.path.join(home_dir, "Downloads", "nrmp_archives")
+    if not os.path.exists(dl_dir):
+        os.makedirs(dl_dir)
     for _, row_pdf in df_pdf.iterrows():
-        yeong = 1
+        local_filepath = os.path.join(dl_dir, row_pdf['filename'])
+        if os.path.exists(local_filepath):
+            print(f"File already exists (not downloading): {local_filepath}")
+            continue
+        response = requests.get(row_pdf['url'])
+        if response.ok:
+            with open(local_filepath, mode="wb") as file:
+                file.write(response.content)
+                print(f"Downloaded file: {row_pdf['filename']} "
+                      f"to {local_filepath}")
 
-
-
-    billy = 1
+    # Write out index
+    index_filename = "nrmp_archive_index.csv"
+    index_filepath = os.path.join(dl_dir, index_filename)
+    df_pdf.to_csv(index_filepath)
     pass
 
 
