@@ -86,7 +86,7 @@ def get_nrmp_archive_pdfs():
     # Write out index
     index_filename = "nrmp_archive_index.csv"
     index_filepath = os.path.join(dl_dir, index_filename)
-    df_pdf.to_csv(index_filepath)
+    df_pdf.to_csv(index_filepath, index=False)
     pass
 
 
