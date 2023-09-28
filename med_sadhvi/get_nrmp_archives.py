@@ -1,9 +1,9 @@
-from urllib.request import urlretrieve
+import os
+import re
+
+import pandas as pd
 import requests
 from bs4 import BeautifulSoup
-import pandas as pd
-import re
-import os
 
 
 def get_year_from_url(url: str) -> str:
