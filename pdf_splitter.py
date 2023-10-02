@@ -2,6 +2,13 @@ import sys
 import os
 from PyPDF2 import PdfWriter, PdfReader
 
+"""
+Best practice
+    1. Run splitter: python pdf_splitter.py [filepath] 1 10
+    (Note: file size is often large, eg, 100s of MB)
+    2. Open in Adobe Reader and Save As PDF
+"""
+
 
 def pdf_splitter(filepath, start, end):
     # we will save new splited pdf as "nameofpdf splitted.pdf"
