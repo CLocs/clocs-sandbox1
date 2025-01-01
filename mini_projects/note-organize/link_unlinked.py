@@ -4,41 +4,51 @@ import re
 import tempfile
 import shutil
 
-debug_str_len_ext_post = 13
-debug_str_len_ext_pre = 4
+DEBUG_STR_EXT_POST = 13
+DEBUG_STR_EXT_PRE = 4
+
 
 def link_unlinked(note_name: str, 
-                  note_path: str, 
-                  obsidian_vault_path: str):
+                  note_obsidian_url: str, 
+                  obsidian_vault_path: str,
+                  dry_run: bool = False):
+    """
+    Link all unlinked references to note_name in the obsidian vault.
+    """
+
+    # Clean the obsidian vault path
+    obsidian_vault_path_clean = os.path.normpath(obsidian_vault_path)
+
+    # Clean the note obisidian url
+    note_url_clean = note_obsidian_url.replace("%2F", "/")
+    note_path_local = note_url_clean.replace("obsidian://open?vault=obsidian&file=", "")
+    note_full_path = os.path.join(obsidian_vault_path_clean, note_path_local)
+    note_full_path = note_full_path + ".md"
+
     # Check obsidian vault path
-    if not os.path.exists(obsidian_vault_path):
+    if not os.path.exists(obsidian_vault_path_clean):
         print(f"Obsidian vault path does not exist: {obsidian_vault_path}")
         return
     
     # Check if note exists in obsidian vault
-    note_path = os.path.join(obsidian_vault_path, note_path)
-    if not os.path.exists(note_path):
-        print(f"Note does not exist in obsidian vault: {note_path}")
+    if not os.path.exists(note_full_path):
+        print(f"Note does not exist in obsidian vault: {note_full_path}")
         return
     
     # Make replace string -- this may change for other notes and be a local file path
     note_replace_string = f"[[{note_name}]]"
     
     # Search all notes for references to note_name
-    ref_list, all_files = find_unlinked_references_to_note(note_name, obsidian_vault_path, note_replace_string)
-    
-    # Print
+    ref_list, all_files = find_unlinked_references_to_note(note_name, obsidian_vault_path_clean, note_replace_string)
     print(f"Found {len(ref_list)} references to {note_name} after searching {len(all_files)} files")
-    # for i, ref in enumerate(ref_path):
-    #     print(f"({i+1}/{len(ref_path)}) Found reference to {note_name} in {ref['path']} at line {ref['line']}")
     
     # Update references to note_name to obsidian link
-    for i, ref in enumerate(ref_list):
-        replaced = replace_str_in_file_line(ref["path"], ref["i_line"], ref["i_start"], note_name, note_replace_string)
-        if replaced:
-            # Update to replace a substring at i_start
-            print(f"({i+1}/{len(ref_list)}) Updated reference to {note_name} in {ref['path']}")
-            billy = 1
+    if not dry_run:
+        for i, ref in enumerate(ref_list):
+            replaced = replace_str_in_file_line(ref["path"], ref["i_line"], ref["i_start"], note_name, note_replace_string)
+            if replaced:
+                # Update to replace a substring at i_start
+                print(f"({i+1}/{len(ref_list)}) Updated reference to {note_name} in {ref['path']}")
     return True
 
 
@@ -78,16 +88,16 @@ def find_unlinked_references_to_note(note_name, obsidian_vault_path, note_replac
 def get_substring_with_buffer(line: str, i_start: int, orig_str: str) -> str:
     # Buffer the end extension
     line_buff = len(line) - (i_start + len(orig_str))
-    if line_buff > debug_str_len_ext_post:
-        line_ext_end = debug_str_len_ext_post
+    if line_buff > DEBUG_STR_EXT_POST:
+        line_ext_end = DEBUG_STR_EXT_POST
     else:
         line_ext_end = line_buff
     # Buffer the start extension
-    line_buff_start = i_start - debug_str_len_ext_pre
+    line_buff_start = i_start - DEBUG_STR_EXT_PRE
     if line_buff_start < 0:
-        line_ext_start = debug_str_len_ext_pre + line_buff_start
+        line_ext_start = DEBUG_STR_EXT_PRE + line_buff_start
     else:
-        line_ext_start = debug_str_len_ext_pre
+        line_ext_start = DEBUG_STR_EXT_PRE
     # Make the output string: [orig_str] << [start_ext <- orig_str -> end_ext]
     substr_w_buffer = (f"{line[i_start+1:i_start+len(orig_str)+1] } << {line[i_start-line_ext_start:i_start+len(orig_str)+line_ext_end]}")
     return substr_w_buffer
@@ -177,13 +187,5 @@ if __name__ == '__main__':
     note_obisidian_url = "obsidian://open?vault=obsidian&file=People%2FAddy"
     obsidian_vault_path = "D:/My Drive/Resources/obsidian/"
     # obsidian_vault_path = "C:/Users/dasco/work_temp/obsidian_test"
-    
-    obsidian_vault_path_clean = os.path.normpath(obsidian_vault_path)
 
-    note_url_clean = note_obisidian_url.replace("%2F", "/")
-    note_path_local = note_url_clean.replace("obsidian://open?vault=obsidian&file=", "")
-    note_absolute_path = os.path.join(obsidian_vault_path_clean, note_path_local)
-    note_absolute_path = note_absolute_path + ".md"
-
-
-    link_unlinked(note_name, note_absolute_path, obsidian_vault_path_clean)
+    link_unlinked(note_name, note_obisidian_url, obsidian_vault_path)
