@@ -21,10 +21,35 @@ def link_unlinked(note_name: str,
         print(f"Note does not exist in obsidian vault: {note_path}")
         return
     
-    # Make replace string
+    # Make replace string -- this may change for other notes and be a local file path
     note_replace_string = f"[[{note_name}]]"
     
     # Search all notes for references to note_name
+    ref_list, all_files = find_unlinked_references_to_note(note_name, obsidian_vault_path, note_replace_string)
+    
+    # Print
+    print(f"Found {len(ref_list)} references to {note_name} after searching {len(all_files)} files")
+    # for i, ref in enumerate(ref_path):
+    #     print(f"({i+1}/{len(ref_path)}) Found reference to {note_name} in {ref['path']} at line {ref['line']}")
+    
+    # Update references to note_name to obsidian link
+    for i, ref in enumerate(ref_list):
+        replaced = replace_str_in_file_line(ref["path"], ref["i_line"], ref["i_start"], note_name, note_replace_string)
+        if replaced:
+            # Update to replace a substring at i_start
+            print(f"({i+1}/{len(ref_list)}) Updated reference to {note_name} in {ref['path']}")
+            billy = 1
+    return True
+
+
+def find_unlinked_references_to_note(note_name, obsidian_vault_path, note_replace_string):
+    """
+    Find all unlinked references to note_name in the obsidian vault. 
+    Store in a list of dicts with the following keys:
+    - path: str, the path to the file containing the reference
+    - i_line: int, the line number of the reference
+    - i_start: int, the start index of the reference in the line
+    """
     ref_dict = []
     all_files = []
     n_links = 0
@@ -46,37 +71,24 @@ def link_unlinked(note_name: str,
                                         "i_line": i_line,
                                         "i_start": i_start_out
                                     }
-                                )
-    
-    # Print
-    print(f"Found {len(ref_dict)} references to {note_name} after searching {len(all_files)} files")
-    # for i, ref in enumerate(ref_path):
-    #     print(f"({i+1}/{len(ref_path)}) Found reference to {note_name} in {ref['path']} at line {ref['line']}")
-    
-    # Update references to note_name to note_obisidian_url
-    for i, ref in enumerate(ref_dict):
-        replaced = replace_str_in_file_line(ref["path"], ref["i_line"], ref["i_start"], note_name, note_replace_string)
-        if replaced:
-            # Update to replace a substring at i_start
-            print(f"({i+1}/{len(ref_dict)}) Updated reference to {note_name} in {ref['path']}")
-            billy = 1
-    return True
+                                )   
+    return ref_dict,all_files
 
 
-def get_substring_with_buffer(line, i_start, orig_str) -> str:
+def get_substring_with_buffer(line: str, i_start: int, orig_str: str) -> str:
+    # Buffer the end extension
     line_buff = len(line) - (i_start + len(orig_str))
     if line_buff > debug_str_len_ext_post:
         line_ext_end = debug_str_len_ext_post
     else:
         line_ext_end = line_buff
-    # It's a legit replacement!
+    # Buffer the start extension
     line_buff_start = i_start - debug_str_len_ext_pre
-    # if line_buff_start == 0:
-    #     line_ext_start = 0
     if line_buff_start < 0:
         line_ext_start = debug_str_len_ext_pre + line_buff_start
     else:
         line_ext_start = debug_str_len_ext_pre
+    # Make the output string: [orig_str] << [start_ext <- orig_str -> end_ext]
     substr_w_buffer = (f"{line[i_start+1:i_start+len(orig_str)+1] } << {line[i_start-line_ext_start:i_start+len(orig_str)+line_ext_end]}")
     return substr_w_buffer
 
@@ -105,6 +117,7 @@ def valid_replace(line, orig_str, replace_str, n_links):
             elif line2[i_start+len(orig_str)+1:i_start+len(orig_str)+4] == ".md":
                 continue
             else:
+                # It's a legit replacement!
                 substr_w_buffer = get_substring_with_buffer(line2, i_start, orig_str)
                 print(f"({n_links}): {substr_w_buffer}")
                 n_links += 1
