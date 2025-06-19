@@ -183,9 +183,9 @@ def substring_replacer(line, orig_str, replace_str, i_insert):
 
 
 if __name__ == '__main__':
-    note_name = "Addy"
-    note_obisidian_url = "obsidian://open?vault=obsidian&file=People%2FAddy"
+    note_name = "Sadhvi"
+    note_obisidian_url = "obsidian://open?vault=obsidian&file=People%2FSadhvi"
     obsidian_vault_path = "D:/My Drive/Resources/obsidian/"
     # obsidian_vault_path = "C:/Users/dasco/work_temp/obsidian_test"
 
-    link_unlinked(note_name, note_obisidian_url, obsidian_vault_path)
+    link_unlinked(note_name, note_obisidian_url, obsidian_vault_path, dry_run=True)
